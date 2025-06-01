@@ -1,0 +1,48 @@
+# Minecraft World Backup (MWB)
+
+MWB is a simple C++ tool to backup Minecraft worlds by copying the world folders and storing them with date-stamped names.
+
+## Features
+
+- Copies Minecraft world folders recursively
+- Automatically names backups with current date
+- Configurable source and destination paths via JSON config file
+
+## Getting Started
+
+### Build
+
+Requires C++17 and CMake.
+
+```bash
+git clone https://github.com/yourusername/minecraft-backup.git
+cd minecraft-backup
+mkdir build && cd build
+cmake ..
+make
+```
+### Usage
+MWB and config should be in the same folder !!!
+Run the executable:
+./MWB
+
+Config file example (config.json)
+```
+{
+  "path": {
+    "source": "/home/user/.minecraft/saves",
+    "destination": "/home/user/minecraft_backups"
+  },
+  "worlds": {
+    "world": "world",
+    "nether": "world_nether",
+    "the_end": "world_the_end"
+  }
+}
+```
+
+#### License
+
+This project is licensed under the MIT License.
+
+Feel free to open issues or submit pull requests!

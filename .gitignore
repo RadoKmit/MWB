@@ -1,0 +1,26 @@
+# Build output
+/build/
+*.o
+*.out
+*.exe
+
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Editors/IDEs
+.vscode/
+.idea/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Backups / temp
+*~
+*.swp
+
+# Ignore compiled binary if you commit from build dir
+MWB
