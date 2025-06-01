@@ -15,8 +15,8 @@ MWB is a simple C++ tool to backup Minecraft worlds by copying the world folders
 Requires C++17 and CMake.
 
 ```bash
-git clone https://github.com/yourusername/minecraft-backup.git
-cd minecraft-backup
+git clone https://github.com/RadoKmit/MWB.git
+cd MWB
 mkdir build && cd build
 cmake ..
 make
