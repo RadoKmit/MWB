@@ -37,8 +37,7 @@ int copyWorld(const json& config, const str worldName){
     }
 
     fs::path source = fs::path(config["path"]["source"]) / worldName;
-    str backupName = GetDate() + "_" + worldName;
-    fs::path destination = BuildBackupPath(config["path"]["destination"], backupName);
+    fs::path destination = BuildBackupPath(config["path"]["destination"], worldName);
 
     try {
         fs::copy(source, destination, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
