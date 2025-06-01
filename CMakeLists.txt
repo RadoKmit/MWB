@@ -14,3 +14,6 @@ include_directories(include)
 add_executable(MWB
 src/main.cpp
 )
+
+# Set installation target
+install(TARGETS MWB DESTINATION bin)
