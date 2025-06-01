@@ -22,9 +22,8 @@ cmake ..
 make
 ```
 ### Usage
-MWB and config should be in the same folder !!!
 Run the executable:
-./MWB
+./MWB /(path to config file)
 
 Config file example (config.json)
 ```
