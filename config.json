@@ -1,11 +1,11 @@
 {
     "path": {
-      "source": "/home/rado/minecraft",
-      "destination": "/home/rado/backups"
+      "source": "path to folder with minecraft worlds",
+      "destination": "path to folder for backups"
     },
     "worlds": {
       "overworld": "world",
       "nether": "world_nether",
       "the_end": "world_the_end"
     }
-  }
+}

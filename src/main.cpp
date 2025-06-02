@@ -1,114 +1,49 @@
 // Standard library headers
-#include <chrono>
-#include <ctime>
-#include <filesystem>
+#include "logger.hpp"
+#include "backup.hpp"
 #include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
+#include <filesystem>
+#include <string>
 
 // Third-party headers
 #include "json.hpp"
 
+// TO-DO: folders copied in one folder
+// folder zipping
+// deletes n + 1 backup that is oldest
 namespace fs = std::filesystem;
-using str = std::string;
 using json = nlohmann::json;
+using str = std::string;
 
 constexpr const char* CONFIG_FILE = "config.json";
-
-enum LogLevel { INFO, WARNING, ERROR };
-
-std::string getCurrentTime() {
-    auto now = std::chrono::system_clock::now();
-    auto time = std::chrono::system_clock::to_time_t(now);
-    std::tm tm = *std::localtime(&time);
-
-    std::ostringstream oss;
-    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
-    return oss.str();
-}
-
-str getLogFileName(){
-    std::ostringstream logFileName;
-    logFileName << getCurrentTime() << "log.txt";
-    return logFileName.str();
-}
-
-std::ofstream logFile(getLogFileName());
-
-void log(LogLevel level, const str& message){
-    str prefix;
-    switch(level){
-        case INFO:    prefix = "[INFO] "; break;
-        case WARNING: prefix = "[WARNING] "; break;
-        case ERROR:   prefix = "[ERROR] "; break;
-    }
-    logFile << getCurrentTime() << " " << prefix << message << std::endl;
-}
-
-std::string GetDate(){
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-    std::tm* local_time = std::localtime(&now_time);
-
-    std::ostringstream oss;
-    oss << std::setfill('0') << std::setw(2) << local_time->tm_mday << "-" << std::setw(2) << local_time->tm_mon + 1 << "-" << local_time->tm_year + 1900;
-    return oss.str();
-}
-
-fs::path BuildBackupPath(const str& basePath, const str& worldName) {
-    return fs::path(basePath) / (GetDate() + "_" + worldName);
-}
-
-int copyWorld(const json& config, const str worldName){
-    fs::path source = fs::path(config["path"]["source"]) / worldName;
-    fs::path destination = BuildBackupPath(config["path"]["destination"], worldName);
-    std::ostringstream info;
-    info << "Copying " << worldName << " in to " << destination;
-    log(INFO, info.str());
-    try {
-        fs::copy(source, destination, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
-        std::ostringstream info2;
-        info2 << "world copied from " << source << " to " << destination;
-        log(INFO, info2.str());
-    } catch (fs::filesystem_error& e){
-        std::ostringstream error;
-        error << "Error copying files: " << e.what();
-        log(ERROR, error.str());
-        return 1;
-    }
-    return 0;
-}
+constexpr const char* SECTION_WORLDS = "worlds";
+constexpr const char* SECTION_PATHS = "paths";
 
 int main() {
     log(INFO, "==========================");
     log(INFO, "Starting world backup");
     log(INFO, "==========================");
-    
-    log(INFO, "Loading config.json");
+
     std::ifstream configFile(CONFIG_FILE);
-    if(!configFile){
-        log(ERROR, "Failed to load config.josn");
+    if (!configFile) {
+        log(ERROR, "Failed to load config.json");
         return 1;
     }
 
     json config;
     configFile >> config;
-    if (!config.contains("worlds")) {
-        log(ERROR, "Config missing 'worlds' section");
-        return 1;
-    }
 
-    if (!config.contains("path") || !config["path"].contains("source") || !config["path"].contains("destination")) {
-        log(ERROR, "Config missing paths");
+    if (!config.contains(SECTION_WORLDS) || !config.contains(SECTION_PATHS)
+        || !config[SECTION_PATHS].contains("source") || !config[SECTION_PATHS].contains("destination")) {
+        log(ERROR, "Invalid config structure");
         return 1;
     }
 
     log(INFO, "Copying worlds");
-    for (auto& [key, worldName] : config["worlds"].items()) {
-        copyWorld(config, worldName.get<str>());
+    for (auto& [_, worldName] : config[SECTION_WORLDS].items()) {
+        copyWorld(worldName.get<std::string>(), fs::path(config[SECTION_PATHS]["source"].get<str>()), fs::path(config[SECTION_PATHS]["destination"].get<str>()));
     }
 
-    logFile.close();
+    closeLog();
     return 0;
 }
