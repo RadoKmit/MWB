@@ -9,9 +9,11 @@ add_compile_options(-Wall -Wextra -Wpedantic)
 
 # Add source files
 add_executable(MWB
-src/main.cpp
-src/logger.cpp
 src/backup.cpp
+src/backupRemoval.cpp
+src/logger.cpp
+src/main.cpp
+src/timeInfo.cpp
 )
 
 # Include directories

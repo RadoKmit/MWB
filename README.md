@@ -36,7 +36,8 @@ Config file example (config.json)
     "world": "world",
     "nether": "world_nether",
     "the_end": "world_the_end"
-  }
+  },
+  "backupsbackupsToKeep": 10
 }
 ```
 

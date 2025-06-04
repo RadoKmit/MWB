@@ -1,6 +1,8 @@
 #pragma once
+
 #include <string>
 #include <filesystem>
+
 #include "json.hpp"
 
 namespace fs = std::filesystem;

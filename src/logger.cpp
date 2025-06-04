@@ -1,23 +1,12 @@
-#include "logger.hpp"
 #include <fstream>
 #include <sstream>
-#include <iomanip>
-#include <chrono>
-#include <ctime>
 
-std::string getCurrentTime() {
-    auto now = std::chrono::system_clock::now();
-    auto t = std::chrono::system_clock::to_time_t(now);
-    std::tm tm = *std::localtime(&t);
-
-    std::ostringstream oss;
-    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
-    return oss.str();
-}
+#include "logger.hpp"
+#include "timeInfo.hpp"
 
 std::string getLogFileName() {
     std::ostringstream logFileName;
-    logFileName << getCurrentTime() << "_log.txt";
+    logFileName << GetDate() << "_log.txt";
     return logFileName.str();
 }
 

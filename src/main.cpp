@@ -1,12 +1,14 @@
 // Standard library headers
-#include "logger.hpp"
-#include "backup.hpp"
 #include <fstream>
 #include <filesystem>
 #include <string>
 
 // Third-party headers
+#include "backup.hpp"
+#include "backupRemoval.hpp"
 #include "json.hpp"
+#include "logger.hpp"
+#include "timeInfo.hpp"
 
 // TO-DO: folders copied in one folder
 // folder zipping
@@ -18,6 +20,7 @@ using str = std::string;
 constexpr const char* CONFIG_FILE = "config.json";
 constexpr const char* SECTION_WORLDS = "worlds";
 constexpr const char* SECTION_PATHS = "paths";
+constexpr const char* SAVED_BACKUPS = "backupsbackupsToKeep";
 
 int main() {
     log(INFO, "==========================");
@@ -39,10 +42,28 @@ int main() {
         return 1;
     }
 
+    log(INFO, "Creating folder");
+    str folderName = GetDate() + "worldsBackup";
+    fs::path backupFolderPath = config[SECTION_PATHS]["destination"] / fs::path(folderName);
+    if(!fs::exists(backupFolderPath)){
+        if(fs::create_directory(backupFolderPath)){
+            log(INFO, "Folder created");
+        } else {
+            log(ERROR, "Failed to create folder");
+            return 1;
+        }
+    }
+
     log(INFO, "Copying worlds");
     for (auto& [_, worldName] : config[SECTION_WORLDS].items()) {
-        copyWorld(worldName.get<std::string>(), fs::path(config[SECTION_PATHS]["source"].get<str>()), fs::path(config[SECTION_PATHS]["destination"].get<str>()));
+        copyWorld(worldName.get<std::string>(), fs::path(config[SECTION_PATHS]["source"].get<str>()), backupFolderPath);
     }
+
+    log(INFO, "Deleting excess backups in:" + config[SECTION_PATHS]["destination"].get<str>());
+    if(!config.contains(SAVED_BACKUPS)){
+        log(ERROR, "Backups amount not specified!");
+    }
+    removeBackups(fs::path(config[SECTION_PATHS]["destination"].get<str>()), config[SAVED_BACKUPS].get<int>());
 
     closeLog();
     return 0;

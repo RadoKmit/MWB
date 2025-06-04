@@ -7,5 +7,6 @@
       "overworld": "world",
       "nether": "world_nether",
       "the_end": "world_the_end"
-    }
+    },
+    "savedBackups": 10
 }
